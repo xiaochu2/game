@@ -1,0 +1,19 @@
+{
+    "id": "radish-equi",
+    "displayName": "equiAdmin响应式后台管理框架",
+    "version": "1.1",
+    "description": "这是一个响应式后台管理框架，让开发者仅需关注于业务逻辑的代码开发。",
+    "keywords": [
+        "uniapp",
+        "响应式",
+        "admin",
+        "后台管理",
+        "后台"
+    ],
+    "dcloudext": {
+        "category": [
+            "uni-app前端模板",
+            "uni-app前端项目模板"
+        ]
+    }
+}
