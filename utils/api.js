@@ -24,6 +24,16 @@ export function withdraw(data,contentType){
 		contentType
     })
 }
+export function review_withdrawal(data,contentType){
+    return request.request({
+        url:'/Agent/review_withdrawal',
+        method:'POST',
+		data,
+		contentType
+    })
+}
+
+
 export function user_lists(data,contentType){
     return request.request({
         url:'/Agent/user_lists',

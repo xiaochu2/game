@@ -27,13 +27,16 @@
 				</template>
 				<uni-row>
 					<uni-col v-for="(data,index) in equipment_data" :key="index" :xs="24" :md="12" :lg="6">
-						<uni-card :title="data.Account" :extra="'id：'+data.id" style="height: 170px;" >
-						   <text>金币：{{data.amount*100}}</text><br>
-						   <!-- <text>状态：正常</text><br> -->
-							<!-- <text>房卡：{{data.diamond}}</text><br> -->
-							<!-- <text>上分：1000 下分：1000</text><br> -->
-							
-							<uni-row style="padding-top:10px;">
+						<uni-card :title="data.Account" :extra="'id：'+data.id" style="height: 250px;" >
+						   <text>金币：{{data.amount*100}}({{data.amount}}u)</text><br>
+						   <text>银行名称：{{data.bank_name}}</text> <br>
+						   <text>支行：{{data.bank_branch}}</text> <br>
+						   <text>银行卡号：{{data.bank_account}}</text> <br>
+						   <text v-if="data.state==1" >状态：<text style="color: cornflowerblue;">已通过</text></text>
+						   <text v-else-if="data.state==2" >状态：<text style="color: crimson;">已拒绝</text></text>
+						   <text v-else>状态：审核中</text><br>
+						   <text>提现时间：{{data.createtime}}</text>
+							<uni-row style="padding-top:10px;" v-if="data.state==0">
 						<!-- 		<text>今日充值：1000 </text>
 								
 								
@@ -43,12 +46,14 @@
 								<uni-col :span="6" align="center">
 									<uni-icons type="minus"></uni-icons>
 								</uni-col> -->
-	<!-- 							<uni-col :span="6" align="center">
-									<uni-icons type="link"></uni-icons>
+								
+								<uni-col :span="6" align="center">
+									<uni-icons type="checkmarkempty" @click="pass(data.id)"></uni-icons>
 								</uni-col>
 								<uni-col :span="6" align="center">
-									<uni-icons type="trash-filled"></uni-icons>
-								</uni-col> -->
+									<uni-icons type="closeempty" @click="reject(data.id)"></uni-icons>
+								</uni-col> 
+								
 							</uni-row>
 
 						</uni-card>
@@ -61,15 +66,15 @@
 			</uni-card>
 		</scroll-view>
 		<uni-popup ref="popup" type="dialog">
-			<uni-popup-dialog mode="input" message="成功消息" placeholder="请输入金币" :title="userinfo" :duration="2000" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
+			<uni-popup-dialog mode="base" message="成功消息" :duration="2000" :before-close="true" content="确定拒绝审核吗" @close="close" @confirm="confirm"></uni-popup-dialog>
 		</uni-popup>
 		<uni-popup ref="popup2" type="dialog">
-			<uni-popup-dialog mode="input" message="成功消息" placeholder="请输入金币" title="下分" :duration="2000" :before-close="true" @close="close2" @confirm="confirm2"></uni-popup-dialog>
+			<uni-popup-dialog mode="base" message="成功消息" :duration="2000" :before-close="true" content="确定通过审核吗" @close="close2" @confirm="confirm2"></uni-popup-dialog>
 		</uni-popup>
 	</view>
 </template>
 <script>
-	import {withdraw} from '@/utils/api.js'
+	import {withdraw,review_withdrawal} from '@/utils/api.js'
 	export default {
 		data() {
 			return {
@@ -115,9 +120,13 @@
 				 
 
 			},
-			Increase(id){
+			reject(id){
 				this.check=id;
 				this.$refs.popup.open();
+			},
+			pass(id){
+				this.check=id;
+				this.$refs.popup2.open();
 			},
 			close() {
 				this.$refs.popup.close()
@@ -130,12 +139,10 @@
 				console.log(this.check)
 				var that=this;
 				var data={
-					account:this.check,
-					fee:value,
-					type:'金币',
-					increase:1,
+					id:this.check,
+					state:2
 				}
-                transfer(data,that.token).then(res=>{
+                review_withdrawal(data,that.token).then(res=>{
 					  if(res.status==1){	
 						   uni.showToast({
 							 title: res.msg,
@@ -147,7 +154,6 @@
 							 icon:'success'
 						   })
 						  this.getEquipment()
-						  this.dljb()
 						  this.$refs.popup.close()
 					  }
                  })				
@@ -159,12 +165,10 @@
 				console.log(this.check)
 				var that=this;
 				var data={
-					account:this.check,
-					fee:value,
-					type:'金币',
-					increase:0,
+					id:this.check,
+					state:1
 				}
-                transfer(data,that.token).then(res=>{
+                review_withdrawal(data,that.token).then(res=>{
 					  if(res.status==1){	
 						   uni.showToast({
 							 title: res.msg,
@@ -176,7 +180,6 @@
 							 icon:'success'
 						   })
 						  this.getEquipment()
-						
 						  this.$refs.popup2.close()
 					  }
                  })				
