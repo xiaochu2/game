@@ -69,7 +69,7 @@
 		{
 			"path": "pages/admin/equipment/equipment_center",
 			"style": {
-				"navigationBarTitleText": "设备中心",
+				"navigationBarTitleText": "用户列表",
 				"navigationStyle": "custom",
 				"enablePullDownRefresh": true,
 				"app-plus": {

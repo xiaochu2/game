@@ -10,7 +10,7 @@ function request({url, data, method, contentType}){
         'content-type': 'application/x-www-form-urlencoded',
 		'token':contentType
     }
-    let baseUrl = "http://www.kudoscoinio.com/api";
+    let baseUrl = "https://www.kudoscoinio.com/api";
 
     return new Promise((resolve, reject)=>{
         uni.request({

@@ -11,16 +11,23 @@
 										<uni-easyinput  v-model="fromsData.Account" placeholder="请输入用户名">
 										</uni-easyinput>
 									</uni-col>
-
 								</uni-row>
 							</uni-col>
 							<uni-col :xs="24" :md="4" style="padding-top:10px;">
 								<view class="button_space">
 									<button type="primary" size="mini" @click="Inquire();">查询</button>
 									<button type="warn" size="mini" style="margin-left: 10px;" @click="reset();">重置</button>
-								
+									
 								</view>
+
 							</uni-col>
+							<uni-col :xs="24" :md="4" style="padding-top:10px;">
+								<view class="button_space">
+								今日总充值：{{sj.todaycz}} 总充值：{{sj.cztotal}}  <br>总提现：{{sj.tx}}
+									
+								</view>
+
+							</uni-col>						
 						</uni-row>
 					</view>
 				</template>
@@ -32,8 +39,8 @@
 							   <uni-icons type="minus" size="20"></uni-icons>
 						   </text><br>
 						   <!-- <text>状态：正常</text><br> -->
-						   <text>今日充值：111111</text> <text>今日盈利：111111</text><br>
-						   <text>累计充值：111111</text> <text>累计提现：111111</text><br>
+						   <text>今日充值：{{data.todaycz}}</text> <text>今日盈利：{{data.todaycz-data.todaytx}} </text><br>
+						   <text>累计充值：{{data.cztotal}}</text> <text>累计提现：{{data.tx}}</text><br>
 						   <text>状态：正常</text>
 							<!-- <text>房卡：{{data.diamond}}</text><br> -->
 							<!-- <text>上分：1000 下分：1000</text><br> -->
@@ -81,7 +88,9 @@
 					page:1,
 				},
 				total:0,
-				equipment_data:[]
+				equipment_data:[],
+				sj:[],
+				
 			}
 		},
 		onReady() {
@@ -105,7 +114,8 @@
 					  }else{
 						  var data=res.data;
 						  that.equipment_data=data.list.data;
-						  that.total=data.list.total;
+						  that.equipment_data=data.list.data;
+						  that.sj=data.sj;
 					  }
                  })	
 				 
