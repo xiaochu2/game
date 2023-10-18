@@ -1,79 +1,241 @@
 <template>
 	<view>
 		<scroll-view scroll-y="true" class="scroll-Y">
-			<uni-card title="设备管理">
+			<uni-card style="min-height: 300px;">
+				<template v-slot:title>
+					<view>
+						<uni-row>
+							<uni-col :xs="24" :md="20">
+								<uni-row style="margin-top:10px">
+									<uni-col :xs="24" :md="12">
+										<uni-easyinput  v-model="fromsData.Account" placeholder="请输入用户名">
+										</uni-easyinput>
+									</uni-col>
+								</uni-row>
+							</uni-col>
+							<uni-col :xs="24" :md="4" style="padding-top:10px;">
+								<view class="button_space">
+									<button type="primary" size="mini" @click="Inquire();">查询</button>
+									<button type="warn" size="mini" style="margin-left: 10px;" @click="reset();">重置</button>
+									
+								</view>
+
+							</uni-col>
+						
+						</uni-row>
+					</view>
+				</template>
 				<uni-row>
-					<uni-col :xs="24" :md="8">
-						<uni-card style="height: 300px;">
-							<uni-icons :type="data.equi_icon" size="100" color="#74d3ff" class="equi_iccn"></uni-icons>
-							<view class="centent">
-								<text>设备名称：{{data.equi_name}}</text>
-								<br>
-								<text>设备秘钥：{{data.equi_key}}</text>
-								<br>
-								<text>设备状态：{{data.line_status=='online'?'在线':'不在线'}}</text>
-							</view>
+					<uni-col v-for="(data,index) in equipment_data" :key="index" :xs="24" :md="12" :lg="6">
+						<uni-card :title="data.Account" :extra="'id：'+data.id" style="height: 170px;" >
+						   <text>金币：{{data.amount*100}}</text><br>
+						   <!-- <text>状态：正常</text><br> -->
+							<!-- <text>房卡：{{data.diamond}}</text><br> -->
+							<!-- <text>上分：1000 下分：1000</text><br> -->
+							
+							<uni-row style="padding-top:10px;">
+						<!-- 		<text>今日充值：1000 </text>
+								
+								
+								<uni-col :span="6" align="center">
+									<text>今日充值：1000 </text>
+								</uni-col>
+								<uni-col :span="6" align="center">
+									<uni-icons type="minus"></uni-icons>
+								</uni-col> -->
+	<!-- 							<uni-col :span="6" align="center">
+									<uni-icons type="link"></uni-icons>
+								</uni-col>
+								<uni-col :span="6" align="center">
+									<uni-icons type="trash-filled"></uni-icons>
+								</uni-col> -->
+							</uni-row>
+
 						</uni-card>
 					</uni-col>
-					<uni-col :xs="24" :md="16">
-						<uni-forms :modelValue="formData">
-							<uni-forms-item label="链接" name="name">
-								<uni-easyinput type="text" v-model="formData.url" placeholder="请输入设备链接" />
-							</uni-forms-item>
-							<uni-forms-item label="秘钥" name="name">
-								<uni-easyinput type="text" v-model="formData.key" placeholder="请输入发送设备秘钥" />
-							</uni-forms-item>
-							<uni-forms-item label="命令内容" name="name">
-								<uni-easyinput type="text" v-model="formData.data" placeholder="请输入发送命令的内容" />
-							</uni-forms-item>
-						</uni-forms>
-						<button type="warn" size="mini" @click="sendMessage">发送命令</button>
-					</uni-col>
 				</uni-row>
+					<view style="width: 100%;">
+						<uni-pagination @change="getPage" show-icon="true" :total="total" current="1" pageSize="10"
+							style="float: left;margin-bottom: 10px;"></uni-pagination>
+					</view>
 			</uni-card>
 		</scroll-view>
+		<uni-popup ref="popup" type="dialog">
+			<uni-popup-dialog mode="input" message="成功消息" placeholder="请输入金币" :title="userinfo" :duration="2000" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
+		</uni-popup>
+		<uni-popup ref="popup2" type="dialog">
+			<uni-popup-dialog mode="input" message="成功消息" placeholder="请输入金币" title="下分" :duration="2000" :before-close="true" @close="close2" @confirm="confirm2"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 <script>
+	import {withdraw} from '@/utils/api.js'
 	export default {
 		data() {
 			return {
-				data: {
-					equi_name: "智能开关",
-					line_status: 'online',
-					equi_key: "6848HUGN",
-					equi_icon: "link"
+				label: "all",
+				fromsData: {
+					Account: '',
 				},
-				formData: {
-					url: 'http://equi.com',
-					key: '6848HUGN',
-					data:''
-				}
+				data:{
+					page:1,
+				},
+				total:0,
+				equipment_data:[],
+				sj:[],
+				check:'',
+				userinfo:''
+				
 			}
 		},
 		onReady() {
-
+			this.getEquipment()
 		},
 		methods: {
-			sendMessage(){
-				uni.showToast({
-					title: '发送命令',
-					duration: 2000
+			getEquipment(){
+				var that=this;
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						 that.token=res.data;
+					}
 				});
+                withdraw(that.data,that.token).then(res=>{
+					  if(res.status==1){	
+						  uni.clearStorageSync();
+						  uni.navigateTo({
+							url:"/"
+						  })		
+					  }else{
+						  var data=res.data;
+						  that.equipment_data=data.data;
+						  that.total=data.total; 
+					  }
+                 })	
+				 
+
+			},
+			Increase(id){
+				this.check=id;
+				this.$refs.popup.open();
+			},
+			close() {
+				this.$refs.popup.close()
+			},
+			close2() {
+				this.$refs.popup2.close()
+			},
+			confirm(value) {
+				// 输入框的值
+				console.log(this.check)
+				var that=this;
+				var data={
+					account:this.check,
+					fee:value,
+					type:'金币',
+					increase:1,
+				}
+                transfer(data,that.token).then(res=>{
+					  if(res.status==1){	
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'error'
+						   })		
+					  }else{
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'success'
+						   })
+						  this.getEquipment()
+						  this.dljb()
+						  this.$refs.popup.close()
+					  }
+                 })				
+				
+				
+			},
+			confirm2(value) {
+				// 输入框的值
+				console.log(this.check)
+				var that=this;
+				var data={
+					account:this.check,
+					fee:value,
+					type:'金币',
+					increase:0,
+				}
+                transfer(data,that.token).then(res=>{
+					  if(res.status==1){	
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'error'
+						   })		
+					  }else{
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'success'
+						   })
+						  this.getEquipment()
+						
+						  this.$refs.popup2.close()
+					  }
+                 })				
+				
+				
+			},
+			reduce(id){
+				this.check=id;
+				this.$refs.popup2.open();				
+			},
+			reset(){
+				this.fromsData.Account='';
+			},
+			Inquire(){
+				var that=this;
+                withdraw(that.fromsData,that.token).then(res=>{
+					  if(res.status==1){	
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'error'
+						   })		
+					  }else{
+						  var data=res.data;
+						  that.equipment_data=data.data;
+						  that.total=data.total; 
+					  }
+                 })					
+			},
+			change(e) {
+				console.log(this.label);
+			},
+			getPage(e){
+				var that=this;
+				this.data.page=e.current;
+                withdraw(that.data,that.token).then(res=>{
+					  if(res.status==1){	
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'error'
+						   })		
+					  }else{
+						  var data=res.data;
+						  that.equipment_data=data.data;
+						  that.total=data.total; 
+					  }
+                 })	
+
 			}
 		}
 	}
 </script>
 <style>
-	.centent {
+	.equipment_button {
 		position: absolute;
-		padding-top: 120px;
-	}
-
-	.equi_iccn {
-		position: absolute;
-		padding-top: 50px;
-		left: calc(50% - 50px);
+		left: 50%;
+		/* 定位父级的50% */
+		top: 50%;
+		transform: translate(-50%, -50%);
+		/*自己的50% */
 	}
 
 	.scroll-Y {

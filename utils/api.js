@@ -16,6 +16,14 @@ export function tj(data,contentType){
 		contentType
     })
 }
+export function withdraw(data,contentType){
+    return request.request({
+        url:'/Agent/withdraw',
+        method:'POST',
+		data,
+		contentType
+    })
+}
 export function user_lists(data,contentType){
     return request.request({
         url:'/Agent/user_lists',

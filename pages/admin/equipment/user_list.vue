@@ -138,6 +138,9 @@
 						  that.equipment_data=data.list.data;
 						  that.equipment_data=data.list.data;
 						  that.sj=data.sj;
+						  that.total=data.list.total;
+					
+						  
 					  }
                  })	
 				 

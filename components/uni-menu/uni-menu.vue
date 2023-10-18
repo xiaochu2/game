@@ -109,32 +109,33 @@
 							size: '22',
 							type: 'vip'
 						},
-						data: [{
-								title: "充值列表",
-								path: "/pages/admin/test/socket",
-							},
+						data: [
+							// {
+							// 	title: "充值列表",
+							// 	path: "/pages/admin/test/socket",
+							// },
 							{
 								title: "提现列表",
 								path: "/pages/admin/test/equi",
 							}
 						]
 					},
-					{
-						title: "用户管理",
-						title_icon: {
-							color: '#fff',
-							size: '22',
-							type: 'person'
-						},
-						data: [{
-							title: "用户管理",
-							path: "/pages/admin/user/user",
-						},
-						{
-							title: "角色管理",
-							path: "/pages/admin/user/userlabel",
-						}]
-					}
+					// {
+					// 	title: "用户管理",
+					// 	title_icon: {
+					// 		color: '#fff',
+					// 		size: '22',
+					// 		type: 'person'
+					// 	},
+					// 	data: [{
+					// 		title: "用户管理",
+					// 		path: "/pages/admin/user/user",
+					// 	},
+					// 	{
+					// 		title: "角色管理",
+					// 		path: "/pages/admin/user/userlabel",
+					// 	}]
+					// }
 
 				]
 			}
