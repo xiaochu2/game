@@ -67,7 +67,7 @@
 			}
 		},
 		{
-			"path": "pages/admin/equipment/equipment_center",
+			"path": "pages/admin/equipment/user_list",
 			"style": {
 				"navigationBarTitleText": "用户列表",
 				"navigationStyle": "custom",
@@ -131,7 +131,7 @@
 			}
 		},
 		{
-			"path": "pages/admin/equipment/add_equi",
+			"path": "pages/admin/equipment/add_user",
 			"style": {
 				"navigationBarTitleText": "新增设备",
 				"navigationStyle": "custom",

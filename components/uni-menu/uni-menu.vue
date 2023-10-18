@@ -90,7 +90,7 @@
 						},
 						data: [{
 								title: "用户列表",
-								path: "/pages/admin/equipment/equipment_center",
+								path: "/pages/admin/equipment/user_list",
 							},
 							// {
 							// 	title: "设备秘钥管理",
@@ -98,7 +98,7 @@
 							// },
 							{
 								title: "新增用户",
-								path: "/pages/admin/equipment/add_equi",
+								path: "/pages/admin/equipment/add_user",
 							}
 						]
 					},

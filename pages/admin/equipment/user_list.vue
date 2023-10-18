@@ -35,8 +35,8 @@
 					<uni-col v-for="(data,index) in equipment_data" :key="index" :xs="24" :md="12" :lg="6">
 						<uni-card :title="data.Account" :extra="'id：'+data.uid" style="height: 170px;" :thumbnail="data.headimgurl">
 						   <text>金币：{{data.score}}
-							   <uni-icons type="plusempty" size="20" style="margin-right:5px;"></uni-icons>
-							   <uni-icons type="minus" size="20"></uni-icons>
+							   <uni-icons type="plusempty" @click="Increase(data.uid);" size="20" style="margin-right:5px;"></uni-icons>
+							   <uni-icons type="minus" size="20" @click="reduce(data.uid);"></uni-icons>
 						   </text><br>
 						   <!-- <text>状态：正常</text><br> -->
 						   <text>今日充值：{{data.todaycz}}</text> <text>今日盈利：{{data.todaycz-data.todaytx}} </text><br>
@@ -72,11 +72,16 @@
 					</view>
 			</uni-card>
 		</scroll-view>
-
+		<uni-popup ref="popup" type="dialog">
+			<uni-popup-dialog mode="input" message="成功消息" placeholder="请输入金币" :title="userinfo" :duration="2000" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
+		</uni-popup>
+		<uni-popup ref="popup2" type="dialog">
+			<uni-popup-dialog mode="input" message="成功消息" placeholder="请输入金币" title="下分" :duration="2000" :before-close="true" @close="close2" @confirm="confirm2"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 <script>
-	import {user_lists} from '@/utils/api.js'
+	import {user_lists,transfer,userinfo} from '@/utils/api.js'
 	export default {
 		data() {
 			return {
@@ -90,13 +95,30 @@
 				total:0,
 				equipment_data:[],
 				sj:[],
+				check:'',
+				userinfo:''
 				
 			}
 		},
 		onReady() {
 			this.getEquipment()
+			this.dljb()
 		},
 		methods: {
+			dljb(){
+				var that=this;
+                userinfo('',that.token).then(res=>{
+					  if(res.status==1){	
+						  uni.clearStorageSync();
+						  uni.navigateTo({
+							url:"/"
+						  })		
+					  }else{
+						  var data=res.data;
+						  that.userinfo="上分(可用金币:"+data.score+")";
+					  }
+                 })				
+			},
 			getEquipment(){
 				var that=this;
 				uni.getStorage({
@@ -107,10 +129,10 @@
 				});
                 user_lists(that.data,that.token).then(res=>{
 					  if(res.status==1){	
-						   uni.showToast({
-							 title: res.msg,
-							 icon:'error'
-						   })		
+						  uni.clearStorageSync();
+						  uni.navigateTo({
+							url:"/"
+						  })		
 					  }else{
 						  var data=res.data;
 						  that.equipment_data=data.list.data;
@@ -120,6 +142,78 @@
                  })	
 				 
 
+			},
+			Increase(id){
+				this.check=id;
+				this.$refs.popup.open();
+			},
+			close() {
+				this.$refs.popup.close()
+			},
+			close2() {
+				this.$refs.popup2.close()
+			},
+			confirm(value) {
+				// 输入框的值
+				console.log(this.check)
+				var that=this;
+				var data={
+					account:this.check,
+					fee:value,
+					type:'金币',
+					increase:1,
+				}
+                transfer(data,that.token).then(res=>{
+					  if(res.status==1){	
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'error'
+						   })		
+					  }else{
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'success'
+						   })
+						  this.getEquipment()
+						  this.dljb()
+						  this.$refs.popup.close()
+					  }
+                 })				
+				
+				
+			},
+			confirm2(value) {
+				// 输入框的值
+				console.log(this.check)
+				var that=this;
+				var data={
+					account:this.check,
+					fee:value,
+					type:'金币',
+					increase:0,
+				}
+                transfer(data,that.token).then(res=>{
+					  if(res.status==1){	
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'error'
+						   })		
+					  }else{
+						   uni.showToast({
+							 title: res.msg,
+							 icon:'success'
+						   })
+						  this.getEquipment()
+						
+						  this.$refs.popup2.close()
+					  }
+                 })				
+				
+				
+			},
+			reduce(id){
+				this.check=id;
+				this.$refs.popup2.open();				
 			},
 			reset(){
 				this.fromsData.Account='';

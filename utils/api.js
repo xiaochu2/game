@@ -24,3 +24,27 @@ export function user_lists(data,contentType){
 		contentType
     })
 }
+export function transfer(data,contentType){
+    return request.request({
+        url:'/Agent/transfer',
+        method:'POST',
+		data,
+		contentType
+    })
+}
+export function register(data,contentType){
+    return request.request({
+        url:'/Agent/register',
+        method:'POST',
+		data,
+		contentType
+    })
+}
+export function userinfo(data,contentType){
+    return request.request({
+        url:'/Agent/userinfo',
+        method:'POST',
+		data,
+		contentType
+    })
+}
